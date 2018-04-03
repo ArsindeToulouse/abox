@@ -27,6 +27,11 @@ public class ABoxClient {
 
         while ((userIn = inu.readLine()) != null) {
 
+            if (userIn.equalsIgnoreCase("quit")) {
+                out.println(userIn);
+                break;
+            }
+
             String[] logPass = checkUserIn(userIn);
 
             if (logPass != null) {
@@ -34,7 +39,6 @@ public class ABoxClient {
                 jsonUser = formateToJson(user);
             }
             out.println(jsonUser);
-            if (userIn.equalsIgnoreCase("quit")) break;
             serverIn = in.readLine();
             System.out.println("Server echo: " + serverIn);
         }
