@@ -1,4 +1,4 @@
-package com.abox.client;
+package com.abox.clientside;
 
 import com.abox.serverside.models.User;
 import com.google.gson.Gson;
@@ -25,7 +25,8 @@ public class ABoxClient {
 
         String userIn, serverIn, jsonUser = "";
 
-        while ((userIn = inu.readLine()) != null) {
+        while (true) {
+            userIn = inu.readLine();
 
             if (userIn.equalsIgnoreCase("quit")) {
                 out.println(userIn);
@@ -36,7 +37,7 @@ public class ABoxClient {
 
             if (logPass != null) {
                 User user = new User(logPass[0], logPass[1]);
-                jsonUser = formateToJson(user);
+                jsonUser = formatToJson(user);
             }
             out.println(jsonUser);
             serverIn = in.readLine();
@@ -49,7 +50,7 @@ public class ABoxClient {
         fromServer.close();
     }
 
-    private static String formateToJson(User user) {
+    private static String formatToJson(User user) {
         Gson gson = new Gson();
 
         return "{ \"type\": \"auth\", \"data\": [" + gson.toJson(user) + "]}";

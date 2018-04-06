@@ -3,6 +3,7 @@ package com.abox.serverside.services;
 import com.abox.serverside.models.ReceivedData;
 import com.abox.serverside.models.User;
 import com.google.gson.Gson;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -30,7 +31,7 @@ public class EchoServer {
 
             while (true){
                 String str = in.readLine();
-                if (str.equals("quit"))
+                if (in.equals("quit"))
                     break;
                 System.out.println("Echoing: " + str);
 
@@ -62,5 +63,31 @@ public class EchoServer {
         }
 
         return "Anonymous";
+    }
+
+    @Nullable
+    private String readFromSocket(final InputStream inputStream) {
+
+        int count;
+        byte[] buffer = new byte[1024];
+
+        try {
+            ByteArrayOutputStream byteStream =
+                    new ByteArrayOutputStream(inputStream.available());
+
+            while (true) {
+                count = inputStream.read(buffer);
+                if (count <= 0)
+                    break;
+                byteStream.write(buffer, 0, count);
+            }
+
+            return byteStream.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
