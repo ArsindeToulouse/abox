@@ -1,44 +1,38 @@
 package com.abox.clientside;
 
-import com.abox.clientside.controllers.FilesTreeInfo;
-import com.abox.clientside.models.FileInfo;
+import com.abox.clientside.Helpers.TreeViewHelper;
+import com.abox.clientside.models.SimpleFileInfo;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.util.ArrayList;
 
 public class ABoxFxClient extends Application {
 
     private static final String APP_TITLE = "ABox";
-    private static final String APP_SCREEN_LOCATION = "resources/AppScreen.fxml";
-    private static final String FILE_TREE_INFO_LOCATION = "resources/FileTreeInfo.fxml";
+//    private static final String APP_SCREEN_LOCATION = "resources/AppScreen.fxml";
+//    private static final String FILE_TREE_INFO_LOCATION = "resources/FileTreeInfo.fxml";
 
-    private Stage primaryStage;
-    private BorderPane appScreen;
-
-    private ObservableList<FileInfo> personData = FXCollections.observableArrayList();
+    private ArrayList<SimpleFileInfo> filesList = new ArrayList<>();
 
     public ABoxFxClient() {
-        personData.add(new FileInfo("temp.txt"));
-        personData.add(new FileInfo("LuckyCat.png"));
-        personData.add(new FileInfo("MyNotes.xdoc"));
-        personData.add(new FileInfo("catalog_2459.xdoc"));
-        personData.add(new FileInfo("temp_32.txt"));
-        personData.add(new FileInfo("NewBook.pdf"));
-        personData.add(new FileInfo("Welcome.txt"));
-        personData.add(new FileInfo("MusicList.lst"));
-        personData.add(new FileInfo("HappyNewYear.avi"));
-        personData.add(new FileInfo("HappyNewYear.mp3"));
-    }
-
-    public ObservableList<FileInfo> getPersonData() {
-        return personData;
+        filesList.add(new SimpleFileInfo("temp.txt", "file", "root"));
+        filesList.add(new SimpleFileInfo("images", "dir", "root"));
+        filesList.add(new SimpleFileInfo("docs", "dir", "root"));
+        filesList.add(new SimpleFileInfo("music", "dir", "root"));
+        filesList.add(new SimpleFileInfo("catalog_2459.xdoc", "file", "docs"));
+        filesList.add(new SimpleFileInfo("temp_32.txt", "file", "docs"));
+        filesList.add(new SimpleFileInfo("NewBook.pdf", "file", "root"));
+        filesList.add(new SimpleFileInfo("Welcome.txt", "file", "docs"));
+        filesList.add(new SimpleFileInfo("MusicList.lst", "file", "root"));
+        filesList.add(new SimpleFileInfo("HappyNewYear.avi", "file", "music"));
+        filesList.add(new SimpleFileInfo("HappyNewYear.mp3", "file", "music"));
+        filesList.add(new SimpleFileInfo("new_music", "dir", "music"));
+        filesList.add(new SimpleFileInfo("new_music2", "dir", "new_music"));
     }
 
     public static void main(String[] args) {
@@ -46,39 +40,21 @@ public class ABoxFxClient extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        primaryStage.setTitle(APP_TITLE);
+    public void start(Stage stage) {
+        TreeViewHelper treeViewHelper = new TreeViewHelper(filesList);
+        ArrayList<TreeItem<String>> list = treeViewHelper.getFilesList();
 
-        initAppScreen();
-        showFileTreeInfo();
-    }
+        TreeView<String> treeView = new TreeView<>();
+        TreeItem<String> rootItem = new TreeItem<>("root");
+        rootItem.getChildren().addAll(list);
+        treeView.setRoot(rootItem);
 
-    private void initAppScreen() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ABoxFxClient.class.getResource(APP_SCREEN_LOCATION));
-            appScreen = loader.load();
+        VBox root = new VBox();
+        root.getChildren().add(treeView);
 
-            Scene scene = new Scene(appScreen);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showFileTreeInfo() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ABoxFxClient.class.getResource(FILE_TREE_INFO_LOCATION));
-            AnchorPane pane = loader.load();
-
-            appScreen.setCenter(pane);
-
-            FilesTreeInfo treeInfo = loader.getController();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Scene scene = new Scene(root,600,400);
+        stage.setScene(scene);
+        stage.setTitle(APP_TITLE);
+        stage.show();
     }
 }

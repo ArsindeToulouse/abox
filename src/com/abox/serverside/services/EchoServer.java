@@ -12,15 +12,18 @@ import java.net.Socket;
 public class EchoServer {
 
     private int port;
+    private ServerSocket boxServer;
+    private Socket fromClient;
 
     public EchoServer(int port) {
         this.port = port;
     }
 
-    public void start() {
-        try (ServerSocket boxServer = new ServerSocket(port)) {
+    public void start() throws IOException {
+        try {
+            boxServer = new ServerSocket(port);
+            fromClient = boxServer.accept();
 
-            Socket fromClient = boxServer.accept();
             System.out.println("Connection accepted!");
 
             BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -40,10 +43,11 @@ public class EchoServer {
             }
 
             System.out.println("closing...");
-            fromClient.close();
-            boxServer.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            fromClient.close();
+            boxServer.close();
         }
     }
 
